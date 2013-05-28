@@ -1,3 +1,7 @@
-MyBlogBundle_homepage:
-    pattern:  /hello/{name}
+blog_index:
+    pattern: /
     defaults: { _controller: MyBlogBundle:Default:index }
+
+blog_show:
+    pattern: /{id}/blog_show
+    defaults: { _controller: MyBlogBundle:Default:show}
