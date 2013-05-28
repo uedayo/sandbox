@@ -48,4 +48,16 @@ class DefaultController extends Controller
         // draw
         return $this->render('MyBlogBundle:Default:new.html.twig', array('form' => $form->createView(),));
     }
+
+    public function deleteAction($id)
+    {
+        $em = $this->getDoctrine()->getEntityManager();
+        $post = $em->find('MyBlogBundle:Post', $id);
+        if (!$post) {
+            throw new NotFoundHttpException('The post does not exist.');
+        }
+        $em->remove($post);
+        $em->flush();
+        return $this->redirect($this->generateUrl('blog_index'));
+    }
 }
