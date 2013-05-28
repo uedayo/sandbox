@@ -3,7 +3,7 @@
 namespace My\BlogBundle\Controller;
 
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
-
+use My\BlogBundle\Entity\Post;
 
 class DefaultController extends Controller
 {
@@ -20,5 +20,32 @@ class DefaultController extends Controller
         $em = $this->getDoctrine()->getEntityManager();
         $post = $em->find('MyBlogBundle:Post', $id);
         return $this->render('MyBlogBundle:Default:show.html.twig', array('post' => $post));
+    }
+
+    public function newAction()
+    {
+        // build form
+        $form = $this->createFormBuilder(new Post())
+            ->add('title')
+            ->add('body')
+            ->getForm();
+
+        // validation
+        $request = $this->getRequest();
+        if ('POST' === $request->getMethod()) {
+            $form->bindRequest($request);
+            if ($form->isValid()) {
+                $post = $form->getData();
+                $post->setCreatedAt(new \DateTime());
+                $post->setUpdatedAt(new \DateTime());
+                $em = $this->getDoctrine()->getEntityManager();
+                $em->persist($post);
+                $em->flush();
+                return $this->redirect($this->generateUrl('blog_index'));
+            }
+        }
+
+        // draw
+        return $this->render('MyBlogBundle:Default:new.html.twig', array('form' => $form->createView(),));
     }
 }
